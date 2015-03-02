@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='Flask-HTMLBuilder',
-    version='0.4',
+    version='0.10',
     url='http://github.com/majorz/flask-htmlbuilder',
     license='MIT',
     author='Zahari Petkov',
