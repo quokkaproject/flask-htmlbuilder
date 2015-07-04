@@ -1,11 +1,14 @@
 *.py[cod]
 
+*.ropeproject
+
 # C extensions
 *.so
 
 # Packages
 *.egg
 *.egg-info
+*eggs
 dist
 build
 eggs
