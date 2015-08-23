@@ -4,13 +4,13 @@
 from setuptools import setup
 
 setup(
-    name='Flask-HTMLBuilder',
+    name='quokka-flask-htmlbuilder',
     version='0.10',
-    url='http://github.com/majorz/flask-htmlbuilder',
+    url='http://github.com/quokkaproject/flask-htmlbuilder',
     license='MIT',
-    author='Zahari Petkov',
+    author='QuokkaProject',
     author_email='zarchaoz@gmail.com',
-    description='Flexible Python-only HTML generation for Flask',
+    description='Fork of Flexible Python-only HTML generation for Flask',
     long_description=__doc__,
     packages=['flaskext'],
     namespace_packages=['flaskext'],
