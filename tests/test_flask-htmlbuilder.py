@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 from nose.tools import raises
 
 from flask import Flask, g, Markup
 
-from flaskext.htmlbuilder import html, render, render_template, root_block, \
-     block, Block, RootBlock, Context, init_htmlbuilder, Attr
+from flaskext.htmlbuilder import html, render, render_template, root_block
+from flaskext.htmlbuilder import block, Block, RootBlock, Context, init_htmlbuilder, Attr
 
 
 def rn(element):
@@ -90,7 +94,7 @@ def test_many_text_child_indenting():
 def test_many_child_indenting():
     assert render(html.a(name='value')(html.b(first='one'), 'Text', html.c())) == '<a name="value">\n  <b first="one" />\n  Text\n  <c></c>\n</a>\n'
 
- 
+
 def test_nested_indentating():
     elements = [
         html.doctype('html'),
@@ -104,7 +108,7 @@ def test_nested_indentating():
             )
         )
     ]
-    
+
     assert render(elements) == """<!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -116,6 +120,7 @@ def test_nested_indentating():
   </body>
 </html>
 """
+
 
 def test_unicode_text():
     assert rn(html.a(u'\u03a0\u03a3\u03a9')) == u'<a>\u03a0\u03a3\u03a9</a>'
@@ -183,50 +188,50 @@ def test_escape_attribute_numbers():
 def test_escape_numbers():
     render(html.a(5))
 
-    
+
 def test_root_block_decorator():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/')
     def return_root():
         g.blocks['body'] = 'Hello, World!'
         return render_template()
-    
+
     @root_block()
     def site_root():
         return [html.doctype('html'), html.html(html.head(), html.body(g.blocks['body']))]
-    
+
     client = app.test_client()
     result = client.get('/')
     assert result.mimetype == 'text/html'
-    assert result.data == """<!doctype html>
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head></head>
   <body>Hello, World!</body>
 </html>
 """
-    
-    
+
+
 def test_block_decorator():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/')
     def return_root():
         return render_template()
-    
+
     @root_block()
     def site_root():
         return [html.doctype('html'), html.html(html.head(), html.body(g.blocks['body']))]
-    
+
     @block('body', site_root)
     def site_body():
         return html.p('Hello, World!')
-    
+
     client = app.test_client()
     result = client.get('/')
-    assert result.data == """<!doctype html>
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head></head>
   <body>
@@ -234,35 +239,35 @@ def test_block_decorator():
   </body>
 </html>
 """
-    
+
 def test_multiple_views():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/a')
     def view_a():
         return render_template()
-    
+
     @app.route('/b')
     def view_b():
         return render_template()
-    
+
     @root_block()
     def site_root():
         return [html.doctype('html'), html.html(html.head(), html.body(g.blocks['body']))]
-    
+
     @block('body', site_root, view_a)
     def view_a_body():
         return html.p('Hello, View A!')
-    
+
     @block('body', site_root, view_b)
     def view_b_body():
         return html.p('Hello, View B!')
-    
+
     client = app.test_client()
-    
+
     result = client.get('/a')
-    assert result.data == """<!doctype html>
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head></head>
   <body>
@@ -271,7 +276,7 @@ def test_multiple_views():
 </html>
 """
     result = client.get('/b')
-    assert result.data == """<!doctype html>
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head></head>
   <body>
@@ -279,33 +284,33 @@ def test_multiple_views():
   </body>
 </html>
 """
-    
+
 def test_default_block():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/a')
     def view_a():
         return render_template()
-    
+
     @app.route('/b')
     def view_b():
         return render_template()
-    
+
     @root_block()
     def site_root():
         return [html.doctype('html'), html.html(html.head(), html.body(g.blocks['body']))]
-    
+
     @block('body', site_root, view_a)
     def view_a_body():
         return html.p('Hello, View A!')
-    
+
     @block('body', site_root)
     def default_body():
         return html.p('Hello, Default Block!')
-    
+
     client = app.test_client()
-    
+
     result = client.get('/a')
     assert result.data == """<!doctype html>
 <html>
@@ -324,15 +329,15 @@ def test_default_block():
   </body>
 </html>
 """
-    
+
 def test_multiple_contexts():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/a')
     def view_a():
         return render_template()
-    
+
     @root_block()
     def site_root():
         return [
@@ -348,19 +353,19 @@ def test_multiple_contexts():
                 )
             )
         ]
-    
+
     @block('body', site_root)
     def site_body():
         return html.p('This is the body.')
-    
+
     @block('title', site_root)
     def site_title():
         return 'Title'
-    
+
     client = app.test_client()
     result = client.get('/a')
-    
-    assert result.data == """<!doctype html>
+
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head>
     <title>Title</title>
@@ -374,11 +379,11 @@ def test_multiple_contexts():
 def test_deep_inheritance():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/a')
     def view_a():
         return render_template()
-    
+
     @root_block()
     def site_root():
         return [
@@ -390,19 +395,19 @@ def test_deep_inheritance():
                 )
             )
         ]
-    
+
     @block('body', site_root)
     def site_body():
         return html.div(class_='container')(g.blocks['container'])
-    
+
     @block('container', site_body)
     def container_body():
         return html.div('Container content.')
-    
+
     client = app.test_client()
     result = client.get('/a')
-    
-    assert result.data == """<!doctype html>
+
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head></head>
   <body>
@@ -413,19 +418,19 @@ def test_deep_inheritance():
 </html>
 """
 
-    
+
 def test_alternative_definition():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/a')
     def view_a():
         return render_template()
-    
+
     @app.route('/b')
     def view_b():
         return render_template()
-    
+
     def site_root():
         return [
             html.doctype('html'),
@@ -436,16 +441,16 @@ def test_alternative_definition():
                 )
             )
         ]
-    
+
     def default_body():
         return html.p('Default body.')
-    
+
     def view_a_body():
         return html.div(class_='container')(g.blocks['container'])
-    
+
     def view_a_container():
         return html.div('Container content.')
-    
+
     RootBlock(site_root)(
         Context('body')(
             Block(default_body),
@@ -456,11 +461,11 @@ def test_alternative_definition():
             )
         )
     )
-    
+
     client = app.test_client()
-    
+
     result = client.get('/a')
-    assert result.data == """<!doctype html>
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head></head>
   <body>
@@ -470,9 +475,9 @@ def test_alternative_definition():
   </body>
 </html>
 """
-    
+
     result = client.get('/b')
-    assert result.data == """<!doctype html>
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head></head>
   <body>
@@ -486,7 +491,7 @@ def test_markup():
     assert Markup(html.p(html.comment('Comment'))) == '<p><!--Comment--></p>'
     assert Markup(html.p(html.safe('<strong>&nbsp;Text&nbsp;</strong>'))) == '<p><strong>&nbsp;Text&nbsp;</strong></p>'
     assert Markup(html.safe('<strong>&nbsp;Text&nbsp;</strong>')) == '<strong>&nbsp;Text&nbsp;</strong>'
-    
+
     assert rn(html.p(Markup('<strong>&nbsp;Text&nbsp;</strong>'))) == '<p><strong>&nbsp;Text&nbsp;</strong></p>'
     assert rn(html.p(Markup('&nbsp; '), Markup('<strong>One</strong>'))) == '<p>&nbsp; <strong>One</strong></p>'
     assert render(html.p(Markup('&nbsp; '), Markup('<strong>One</strong>'))) == u'<p>\n  &nbsp; \n  <strong>One</strong>\n</p>\n'
@@ -495,14 +500,14 @@ def test_markup():
 def test_html_block_has_block():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/a')
     def view_a():
         html.block('container')(
             html.div('Container content.')
         )
         return render_template()
-    
+
     @root_block()
     def site_root():
         return [
@@ -514,7 +519,7 @@ def test_html_block_has_block():
                 )
             )
         ]
-    
+
     @block('body', site_root)
     def site_body():
         return html.has_block('container')(
@@ -526,11 +531,11 @@ def test_html_block_has_block():
                 )
             )
         )
-    
+
     client = app.test_client()
     result = client.get('/a')
-    
-    assert result.data == """<!doctype html>
+
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head></head>
   <body>
@@ -545,12 +550,12 @@ def test_html_block_has_block():
 def test_attr_has_attr():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/a')
     def view_a():
         g.attrs['description'] = 'A description'
         return render_template()
-    
+
     @root_block()
     def site_root():
         return [
@@ -567,11 +572,11 @@ def test_attr_has_attr():
                 html.body()
             )
         ]
-    
+
     client = app.test_client()
     result = client.get('/a')
-    
-    assert result.data == """<!doctype html>
+
+    assert result.data.decode('utf-8') == """<!doctype html>
 <html>
   <head>
     <meta content="A description" />
@@ -583,16 +588,16 @@ def test_attr_has_attr():
 def test_default_block():
     app = Flask(__name__)
     init_htmlbuilder(app)
-    
+
     @app.route('/a')
     def view_a():
         return render_template()
-    
+
     @app.route('/b')
     def view_b():
         html.block('title')('New Title')
         return render_template()
-    
+
     @root_block()
     def site_root():
         return html.title(
@@ -600,22 +605,22 @@ def test_default_block():
                 'Default Title'
             )
         )
-    
+
     client = app.test_client()
     result = client.get('/a')
-    assert result.data == """<title>
+    assert result.data.decode('utf-8') == """<title>
   Default Title
 </title>
 """
-    
+
     result = client.get('/b')
-    assert result.data == """<title>
+    assert result.data.decode('utf-8') == """<title>
   New Title
 </title>
 """
-    
+
     result = client.get('/a')
-    assert result.data == """<title>
+    assert result.data.decode('utf-8') == """<title>
   Default Title
 </title>
 """
