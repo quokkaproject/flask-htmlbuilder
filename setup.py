@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='quokka-flask-htmlbuilder',
-    version='0.10',
+    version='0.12',
     url='http://github.com/quokkaproject/flask-htmlbuilder',
     license='MIT',
     author='QuokkaProject',

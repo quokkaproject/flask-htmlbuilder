@@ -35,7 +35,7 @@ clean-test:
 	rm -fr htmlcov/
 
 lint:
-	flake8 flask-htmlbuilder tests
+	flake8 tests
 
 test:
 	python setup.py test
