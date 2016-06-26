@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    flaskext.htmlbuilder
+    flask_htmlbuilder.htmlbuilder
     ~~~~~~~~~~~~~~~~~~~~
 
     Flask-HTMLBuilder is a `Flask`_ extension that allows **flexible** and

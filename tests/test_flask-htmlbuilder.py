@@ -6,8 +6,8 @@ from nose.tools import raises
 
 from flask import Flask, g, Markup
 
-from flaskext.htmlbuilder import html, render, render_template, root_block
-from flaskext.htmlbuilder import block, Block, RootBlock, Context, init_htmlbuilder, Attr
+from flask_htmlbuilder.htmlbuilder import html, render, render_template, root_block
+from flask_htmlbuilder.htmlbuilder import block, Block, RootBlock, Context, init_htmlbuilder, Attr
 
 
 def rn(element):
